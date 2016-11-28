@@ -1,3 +1,9 @@
 'use strict';
 
-module.exports = require('react-native').NativeModules.Intent;
+var {Intent} = require('react-native').NativeModules;
+
+
+
+exports.startNativeIntent = (PACKAGE_NAME, FILE_PATH) => {
+  return Intent.startActivityForResult(PACKAGE_NAME, FILE_PATH);
+};
