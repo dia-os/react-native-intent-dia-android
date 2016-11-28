@@ -10,11 +10,21 @@
     "text",
     "android"
   ],
-  "author": "",
-  "license": "",
-  "repository": "https://github.com/dia-os/react-native-intent-dia-android.git",
-  "bugs": "",
+  "author": "Dia Software",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dia-os/react-native-intent-dia-android.git"
+  },
+  "bugs": {
+    "url": "https://github.com/dia-os/react-native-intent-dia-android/issues"
+  },
   "peerDependencies": {
     "react-native": ">=0.13"
+  },
+  "homepage": "https://github.com/dia-os/react-native-intent-dia-android#readme",
+  "description": "android intent library for react-native.",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
   }
 }
