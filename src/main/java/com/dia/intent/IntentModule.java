@@ -55,6 +55,7 @@ public class IntentModule extends ReactContextBaseJavaModule implements Activity
 
             if(targetIntents.size()==0) {
               promise.resolve(-1);
+              return;
             }
             Intent chooserIntent = Intent.createChooser(targetIntents.remove(0), "Yazdır");
             chooserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
