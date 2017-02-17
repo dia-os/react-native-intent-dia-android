@@ -1,0 +1,81 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/usr/local/bin/node', '/usr/local/bin/npm', 'publish' ]
+2 info using npm@3.7.3
+3 info using node@v5.8.0
+4 verbose publish [ '.' ]
+5 silly cache add args [ '.', null ]
+6 verbose cache add spec .
+7 silly cache add parsed spec Result {
+7 silly cache add   raw: '.',
+7 silly cache add   scope: null,
+7 silly cache add   name: null,
+7 silly cache add   rawSpec: '.',
+7 silly cache add   spec: '/Users/burak.karasoy/diaRepo/react-native-intent-dia-android',
+7 silly cache add   type: 'directory' }
+8 verbose addLocalDirectory /Users/burak.karasoy/.npm/react-native-intent-dia-android/1.0.0/package.tgz not in flight; packing
+9 verbose correctMkdir /Users/burak.karasoy/.npm correctMkdir not in flight; initializing
+10 info lifecycle react-native-intent-dia-android@1.0.0~prepublish: react-native-intent-dia-android@1.0.0
+11 silly lifecycle react-native-intent-dia-android@1.0.0~prepublish: no script for prepublish, continuing
+12 verbose tar pack [ '/Users/burak.karasoy/.npm/react-native-intent-dia-android/1.0.0/package.tgz',
+12 verbose tar pack   '/Users/burak.karasoy/diaRepo/react-native-intent-dia-android' ]
+13 verbose tarball /Users/burak.karasoy/.npm/react-native-intent-dia-android/1.0.0/package.tgz
+14 verbose folder /Users/burak.karasoy/diaRepo/react-native-intent-dia-android
+15 verbose addLocalTarball adding from inside cache /Users/burak.karasoy/.npm/react-native-intent-dia-android/1.0.0/package.tgz
+16 verbose correctMkdir /Users/burak.karasoy/.npm correctMkdir not in flight; initializing
+17 silly cache afterAdd react-native-intent-dia-android@1.0.0
+18 verbose afterAdd /Users/burak.karasoy/.npm/react-native-intent-dia-android/1.0.0/package/package.json not in flight; writing
+19 verbose correctMkdir /Users/burak.karasoy/.npm correctMkdir not in flight; initializing
+20 verbose afterAdd /Users/burak.karasoy/.npm/react-native-intent-dia-android/1.0.0/package/package.json written
+21 silly publish { name: 'react-native-intent-dia-android',
+21 silly publish   version: '1.0.0',
+21 silly publish   main: 'index.js',
+21 silly publish   keywords:
+21 silly publish    [ 'react',
+21 silly publish      'react-native',
+21 silly publish      'react-component',
+21 silly publish      'intent',
+21 silly publish      'text',
+21 silly publish      'android' ],
+21 silly publish   author: { name: 'Dia Software' },
+21 silly publish   license: 'ISC',
+21 silly publish   repository:
+21 silly publish    { type: 'git',
+21 silly publish      url: 'git+https://github.com/dia-os/react-native-intent-dia-android.git' },
+21 silly publish   bugs: { url: 'https://github.com/dia-os/react-native-intent-dia-android/issues' },
+21 silly publish   peerDependencies: { 'react-native': '>=0.13' },
+21 silly publish   homepage: 'https://github.com/dia-os/react-native-intent-dia-android#readme',
+21 silly publish   description: 'android intent library for react-native.',
+21 silly publish   scripts: { test: 'echo "Error: no test specified" && exit 1' },
+21 silly publish   readme: 'ERROR: No README data found!',
+21 silly publish   readmeFilename: 'README.md',
+21 silly publish   gitHead: '2ed7bddd4b130231c408caad0f41d2553c3056f9',
+21 silly publish   _id: 'react-native-intent-dia-android@1.0.0',
+21 silly publish   _shasum: 'e8460774d055774d0d85fd842906f693220a8e61',
+21 silly publish   _from: '.' }
+22 verbose getPublishConfig undefined
+23 silly mapToRegistry name react-native-intent-dia-android
+24 silly mapToRegistry using default registry
+25 silly mapToRegistry registry https://registry.npmjs.org/
+26 silly mapToRegistry uri https://registry.npmjs.org/react-native-intent-dia-android
+27 verbose publish registryBase https://registry.npmjs.org/
+28 silly publish uploading /Users/burak.karasoy/.npm/react-native-intent-dia-android/1.0.0/package.tgz
+29 verbose stack Error: auth required for publishing
+29 verbose stack     at CachingRegistryClient.publish (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/publish.js:30:14)
+29 verbose stack     at /usr/local/lib/node_modules/npm/lib/publish.js:137:14
+29 verbose stack     at mapToRegistry (/usr/local/lib/node_modules/npm/lib/utils/map-to-registry.js:55:3)
+29 verbose stack     at publish_ (/usr/local/lib/node_modules/npm/lib/publish.js:106:3)
+29 verbose stack     at Array.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/slide/lib/bind-actor.js:15:8)
+29 verbose stack     at LOOP (/usr/local/lib/node_modules/npm/node_modules/slide/lib/chain.js:15:14)
+29 verbose stack     at LOOP (/usr/local/lib/node_modules/npm/node_modules/slide/lib/chain.js:14:28)
+29 verbose stack     at chain (/usr/local/lib/node_modules/npm/node_modules/slide/lib/chain.js:20:5)
+29 verbose stack     at /usr/local/lib/node_modules/npm/lib/publish.js:72:5
+29 verbose stack     at RES (/usr/local/lib/node_modules/npm/node_modules/inflight/inflight.js:23:14)
+30 verbose cwd /Users/burak.karasoy/diaRepo/react-native-intent-dia-android
+31 error Darwin 15.5.0
+32 error argv "/usr/local/bin/node" "/usr/local/bin/npm" "publish"
+33 error node v5.8.0
+34 error npm  v3.7.3
+35 error code ENEEDAUTH
+36 error need auth auth required for publishing
+37 error need auth You need to authorize this machine using `npm adduser`
+38 verbose exit [ 1, true ]
