@@ -1,6 +1,7 @@
 package com.dia.intent;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -10,28 +11,34 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.util.SparseArray;
+import android.view.KeyEvent;
+
 import com.facebook.react.bridge.*;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class IntentModule extends ReactContextBaseJavaModule {
+public class IntentModule extends ReactContextBaseJavaModule{
 
     final ReactApplicationContext _reactContext;
     final SparseArray<Promise> promises = new SparseArray<>();
     private static final int IMAGE_PICKER_REQUEST = 467081;
     private static final int PRINTER_PICKER_REQUEST = 10000;
+    private static final int OPEN_FILE_DIALOG = 20000;
+    private static final int OPEN_EXCEL_DIALOG = 30000;
     private static final String E_ACTIVITY_DOES_NOT_EXIST = "E_ACTIVITY_DOES_NOT_EXIST";
     private static final String E_PICKER_CANCELLED = "E_PICKER_CANCELLED";
     private static final String E_FAILED_TO_SHOW_PICKER = "E_FAILED_TO_SHOW_PICKER";
     private static final String E_NO_IMAGE_DATA_FOUND = "E_NO_IMAGE_DATA_FOUND";
 
     private Promise mPickerPromise;
+
     private final ActivityEventListener mActivityEventListener = new BaseActivityEventListener() {
 
         private @NonNull String getRealPathFromURI(@NonNull final Uri uri) {
@@ -55,7 +62,6 @@ public class IntentModule extends ReactContextBaseJavaModule {
                             mPickerPromise.resolve(realPath);
                         }
                     }
-
                     mPickerPromise = null;
                 }
             }else if(requestCode == PRINTER_PICKER_REQUEST){
@@ -67,20 +73,45 @@ public class IntentModule extends ReactContextBaseJavaModule {
                       mPickerPromise.resolve("TAMAMLANDI");
                    }
 
+                   mPickerPromise = null;
+               }
+           }else if(requestCode == OPEN_FILE_DIALOG){
+               if (mPickerPromise != null) {
+
+                   if (resultCode == Activity.RESULT_CANCELED) {
+                       mPickerPromise.resolve("false");
+                   } else if (resultCode == Activity.RESULT_OK) {
+                       Uri selectedfile = _intent.getData();
+                       if (selectedfile == null) {
+                           mPickerPromise.resolve("false");
+                       } else {
+                           String realPath = getRealPathFromURI(selectedfile);
+                           mPickerPromise.resolve(realPath);
+                       }
+                   }
+
+                   mPickerPromise = null;
+               }
+           }else if(requestCode == OPEN_EXCEL_DIALOG){
+               if (mPickerPromise != null) {
+
+                   if (resultCode == Activity.RESULT_CANCELED) {
+
+                       Log.d("excel11","canceled"+_intent);
+                       mPickerPromise.resolve(-1);
+
+                   } else if (resultCode == Activity.RESULT_OK) {
+
+                       Log.d("excel11","ok"+_intent);
+                       mPickerPromise.resolve(1);
+
+                   }
 
                    mPickerPromise = null;
                }
            }
-           /* WritableNativeMap obj = new WritableNativeMap();
 
-            obj.putInt("requestCode", requestCode);
-            obj.putInt("resultCode", resultCode);
-            obj.putString("data", _intent != null ? _intent.getDataString() : null);
 
-            mPickerPromise.resolve(obj);
-            //mPickerPromise.get(requestCode).resolve(obj);
-           // promises.remove(requestCode);
-           */
         }
     };
 
@@ -99,14 +130,32 @@ public class IntentModule extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void startActivityForResult(String packageNames, String FilePath, Promise promise) {
-        Log.d("pickImage","------");
-        if(true) {
+        mPickerPromise = promise;
+        Activity currentActivity = getCurrentActivity();
+        Uri uriPath = Uri.fromFile(new File(FilePath));
+        File _file = new File(URI.create(uriPath.toString()).getPath());
+        if (_file.exists()) {
+            Log.d("excel11","****true"+uriPath);
+        }
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setDataAndType(uriPath, "application/pdf");
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        Log.d("excel11","1"+FilePath);
+        Log.d("excel11","1"+uriPath);
+        File file = new File(FilePath);
+        if(file.exists())
+            Log.d("excel11","1true"+FilePath);
+        try {
+            currentActivity.startActivityForResult(intent,PRINTER_PICKER_REQUEST);
+        } catch (Exception e) {
+            Log.d("excel11",e.toString());
+            mPickerPromise.resolve("error");
+        }
 
-            List<Intent> targetIntents = new ArrayList<Intent>();
+           /* List<Intent> targetIntents = new ArrayList<Intent>();
             PackageManager manager = _reactContext.getPackageManager();
             Activity currentActivity = getCurrentActivity();
             mPickerPromise = promise;
-
             try {
                 JSONArray jsonApps = new JSONArray(packageNames);
                 for (int i = 0; i < jsonApps.length(); i++) {
@@ -118,7 +167,6 @@ public class IntentModule extends ReactContextBaseJavaModule {
                         targetIntents.add(targetIntent);
                     }
                 }
-
                 if (targetIntents.size() == 0) {
                     promise.resolve(-1);
                     return;
@@ -126,30 +174,55 @@ public class IntentModule extends ReactContextBaseJavaModule {
                 Intent chooserIntent = Intent.createChooser(targetIntents.remove(0), "Yazdır");
                 chooserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, targetIntents.toArray(new Parcelable[]{}));
-                //this.reactContext.startActivity(chooserIntent);
+                intent.setDataAndType(uriPath, "application/pdf")
                 currentActivity.startActivityForResult(chooserIntent, PRINTER_PICKER_REQUEST);
             } catch (Exception e) {
-                //mPickerPromise.reject(E_FAILED_TO_SHOW_PICKER, e);
-                //mPickerPromise = null;
                 mPickerPromise.resolve(-1);
-            }
-        }else{
-            Activity currentActivity = getCurrentActivity();
-            mPickerPromise = promise;
+            }*/
 
-            try {
-                final Intent galleryIntent = new Intent(Intent.ACTION_PICK);
-                galleryIntent.setType("image/*");
-                final Intent chooserIntent = Intent.createChooser(galleryIntent, "Pick an image");
-                currentActivity.startActivityForResult(chooserIntent, IMAGE_PICKER_REQUEST);
-            } catch (Exception e) {
-                Log.d("Log12333", e.toString());
-                mPickerPromise.resolve("ERROR123123");
-                mPickerPromise = null;
-            }
+    }
 
+    @ReactMethod
+    public void openFileDialog(Promise promise) {
+        Log.d("choose File","0");
+        Activity currentActivity = getCurrentActivity();
+        mPickerPromise = promise;
+        try {
+            Intent intent = new Intent()
+                    .setType("*/*")
+                    .setAction(Intent.ACTION_GET_CONTENT);
+            currentActivity.startActivityForResult(Intent.createChooser(intent, "Select a file"), OPEN_FILE_DIALOG);
+
+        } catch (Exception e) {
+            Log.d("choose File","1"+e.toString());
+            mPickerPromise.reject("Dosya Seçilemiyor", e);
+            mPickerPromise = null;
         }
+    }
 
+    @ReactMethod
+    public void triggerExcelApplications(String _path,Promise promise) {
+        mPickerPromise = promise;
+        Activity currentActivity = getCurrentActivity();
+        Uri uriPath = Uri.fromFile(new File(_path));
+        File _file = new File(URI.create(uriPath.toString()).getPath());
+        if (_file.exists()) {
+            Log.d("excel11","****true"+uriPath);
+        }
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setDataAndType(uriPath, "application/vnd.ms-excel");
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        Log.d("excel11","1"+_path);
+        Log.d("excel11","1"+uriPath);
+        File file = new File(_path);
+        if(file.exists())
+            Log.d("excel11","1true"+_path);
+            try {
+                currentActivity.startActivityForResult(intent,OPEN_EXCEL_DIALOG);
+            } catch (Exception e) {
+                Log.d("excel11",e.toString());
+                mPickerPromise.resolve("error");
+            }
     }
 
     @ReactMethod
@@ -170,19 +243,6 @@ public class IntentModule extends ReactContextBaseJavaModule {
         }
 
         // promise.resolve(1);
-
     }
 
-
-   /* @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        WritableNativeMap obj = new WritableNativeMap();
-
-        obj.putInt("requestCode", requestCode);
-        obj.putInt("resultCode", resultCode);
-        obj.putString("data", data != null ? data.getDataString() : null);
-
-        promises.get(requestCode).resolve(obj);
-        promises.remove(requestCode);
-    }*/
 }
