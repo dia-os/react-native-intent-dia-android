@@ -6,9 +6,13 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.Environment;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.KeyEvent;
@@ -132,54 +136,30 @@ public class IntentModule extends ReactContextBaseJavaModule{
     public void startActivityForResult(String packageNames, String FilePath, Promise promise) {
         mPickerPromise = promise;
         Activity currentActivity = getCurrentActivity();
-        Uri uriPath = Uri.fromFile(new File(FilePath));
-        File _file = new File(URI.create(uriPath.toString()).getPath());
-        if (_file.exists()) {
-            Log.d("excel11","****true"+uriPath);
+        File _file = new File(Environment.getExternalStorageDirectory()+"/Android/data/"+getReactApplicationContext().getPackageName()+"/files/temp1pdf.pdf");
+        Uri uriPath = Uri.fromFile(_file);
+
+        if(Build.VERSION.SDK_INT >= 24){
+            uriPath = FileProvider.getUriForFile(getReactApplicationContext(), "tr.com.dia.mobile.android.erp", _file);
         }
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setDataAndType(uriPath, "application/pdf");
+
+        Intent intent = new Intent();
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        Log.d("excel11","1"+FilePath);
-        Log.d("excel11","1"+uriPath);
-        File file = new File(FilePath);
-        if(file.exists())
-            Log.d("excel11","1true"+FilePath);
+        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        intent.setAction(Intent.ACTION_VIEW);
+        intent.setDataAndType(uriPath, "application/pdf");
+
         try {
-            currentActivity.startActivityForResult(intent,PRINTER_PICKER_REQUEST);
+            if(intent.resolveActivity(getReactApplicationContext().getPackageManager()) != null){
+                currentActivity.startActivityForResult(intent,PRINTER_PICKER_REQUEST);
+                //getReactApplicationContext().startActivity(intent);
+            }else{
+                mPickerPromise.resolve("else intent error");
+            }
         } catch (Exception e) {
-            Log.d("excel11",e.toString());
+            Log.d("log 6",e.toString());
             mPickerPromise.resolve("error");
         }
-
-           /* List<Intent> targetIntents = new ArrayList<Intent>();
-            PackageManager manager = _reactContext.getPackageManager();
-            Activity currentActivity = getCurrentActivity();
-            mPickerPromise = promise;
-            try {
-                JSONArray jsonApps = new JSONArray(packageNames);
-                for (int i = 0; i < jsonApps.length(); i++) {
-                    JSONObject jsonObj = jsonApps.getJSONObject(i);
-                    String packageName = jsonObj.getString("packageName");
-                    Log.d("Log123", packageName);
-                    Intent targetIntent = manager.getLaunchIntentForPackage(packageName);
-                    if (targetIntent != null) {
-                        targetIntents.add(targetIntent);
-                    }
-                }
-                if (targetIntents.size() == 0) {
-                    promise.resolve(-1);
-                    return;
-                }
-                Intent chooserIntent = Intent.createChooser(targetIntents.remove(0), "Yazdır");
-                chooserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, targetIntents.toArray(new Parcelable[]{}));
-                intent.setDataAndType(uriPath, "application/pdf")
-                currentActivity.startActivityForResult(chooserIntent, PRINTER_PICKER_REQUEST);
-            } catch (Exception e) {
-                mPickerPromise.resolve(-1);
-            }*/
-
     }
 
     @ReactMethod
