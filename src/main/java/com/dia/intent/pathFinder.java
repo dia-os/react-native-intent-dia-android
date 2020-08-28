@@ -40,6 +40,11 @@ public class pathFinder {
                 else if (isDownloadsDocument(uri)) {
 
                     final String id = DocumentsContract.getDocumentId(uri);
+                    
+                    if (id != null && id.startsWith("raw:")) {
+                        return id.substring(4);
+                    }
+                    
                     final Uri contentUri = ContentUris.withAppendedId(
                             Uri.parse("content://downloads/public_downloads"), Long.valueOf(id));
 
