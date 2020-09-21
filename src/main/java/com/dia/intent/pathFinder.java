@@ -39,15 +39,20 @@ public class pathFinder {
                 // DownloadsProvider
                 else if (isDownloadsDocument(uri)) {
 
-                    final String id = DocumentsContract.getDocumentId(uri);
-                    
-                    if (id != null && id.startsWith("raw:")) {
-                        return id.substring(4);
+                    String fileName = getFilePath(context, uri);
+                    if (fileName != null) {
+                        return Environment.getExternalStorageDirectory().toString() + "/Download/" + fileName;
                     }
-                    
-                    final Uri contentUri = ContentUris.withAppendedId(
-                            Uri.parse("content://downloads/public_downloads"), Long.valueOf(id));
 
+                    String id = DocumentsContract.getDocumentId(uri);
+                    if (id.startsWith("raw:")) {
+                        id = id.replaceFirst("raw:", "");
+                        File file = new File(id);
+                        if (file.exists())
+                            return id;
+                    }
+
+                    final Uri contentUri = ContentUris.withAppendedId(Uri.parse("content://downloads/public_downloads"), Long.valueOf(id));
                     return getDataColumn(context, contentUri, null, null);
                 }
                 // MediaProvider
@@ -183,5 +188,26 @@ public class pathFinder {
         final File appDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         final File file = new File(appDir, uri.getLastPathSegment());
         return file.exists() ? file.toString(): null;
+    }
+    
+    public static String getFilePath(Context context, Uri uri) {
+
+        Cursor cursor = null;
+        final String[] projection = {
+                MediaStore.MediaColumns.DISPLAY_NAME
+        };
+
+        try {
+            cursor = context.getContentResolver().query(uri, projection, null, null,
+                    null);
+            if (cursor != null && cursor.moveToFirst()) {
+                final int index = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DISPLAY_NAME);
+                return cursor.getString(index);
+            }
+        } finally {
+            if (cursor != null)
+                cursor.close();
+        }
+        return null;
     }
 }
