@@ -150,12 +150,7 @@ public class IntentModule extends ReactContextBaseJavaModule{
         intent.setDataAndType(uriPath, "application/pdf");
 
         try {
-            if(intent.resolveActivity(getReactApplicationContext().getPackageManager()) != null){
-                currentActivity.startActivityForResult(intent,PRINTER_PICKER_REQUEST);
-                //getReactApplicationContext().startActivity(intent);
-            }else{
-                mPickerPromise.resolve("else intent error");
-            }
+            currentActivity.startActivityForResult(intent,PRINTER_PICKER_REQUEST);
         } catch (Exception e) {
             Log.d("log 6",e.toString());
             mPickerPromise.resolve("error");
